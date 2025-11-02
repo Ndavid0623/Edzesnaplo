@@ -2,64 +2,47 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Edzes;
 use Illuminate\Http\Request;
+use App\Models\Edzes;
 
 class EdzesController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
-    {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
+    // POST /workouts
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'date' => 'required|date',
+            'type' => 'required|string|max:50',
+            'exercise' => 'required|string|max:100',
+            'duration' => 'required|integer|min:1',
+            'notes' => 'nullable|string|max:255',
+        ]);
+
+        $workout = Edzes::create($validated);
+        return response()->json($workout, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Edzes $edzes)
+    // GET /workouts
+    public function index()
     {
-        //
+        return Edzes::all();
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Edzes $edzes)
+    // GET /workouts/type/{type}
+    public function filterByType($type)
     {
-        //
+        return Edzes::where('type', $type)->get();
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Edzes $edzes)
+    // GET /workouts/date/{date}
+    public function filterByDate($date)
     {
-        //
+        return Edzes::where('date', $date)->get();
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Edzes $edzes)
+    // GET /workouts/min-duration/{minutes}
+    public function filterByMinDuration($minutes)
     {
-        //
+        return Edzes::where('duration', '>=', $minutes)->get();
     }
 }
